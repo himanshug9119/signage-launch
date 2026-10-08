@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 196 32" width="392" height="64">
+  <!-- Rebuilt from the site's navbar markup: Material "Tv" outline icon in --accent #3B82F6 + "ScreenSetu" wordmark (Inter 700, #0F172A) -->
+  <g transform="translate(2,4) scale(1)">
+    <path fill="#3B82F6" d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2m0 14H3V5h18z"/>
+  </g>
+  <text x="34" y="23" font-family="Inter, -apple-system, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="20" fill="#0F172A">ScreenSetu</text>
+</svg>
