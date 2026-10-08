@@ -166,7 +166,7 @@ scene('pair', layer => {
   q_('.locv').textContent = u > 3.7 ? 'Pune Café' : 'Select Location'; q_('.locv').style.color = u > 3.7 ? '#E2E8F0' : '#64748B';
   q_('.gen').style.transform = `scale(${clickPress(u, 4.3)})`;
   const paired = u >= 8.3;
-  q_('.wait').innerHTML = paired ? '<span style="color:#34D399">✓ Display paired</span>' : `◌ Waiting for display${'.'.repeat(1 + Math.floor(u * 3) % 3)}`;
+  q_('.wait').innerHTML = paired ? '<span style="color:#34D399">✓ Display paired</span>' : `◌ Waiting for display${'.'.repeat(1 + ((Math.floor(u * 3) % 3) + 3) % 3)}`;
   // TV side: player pairing UI -> paired -> content
   const pin = s.pu.querySelector('.pin');
   if (u < 5.6) pin.innerHTML = '<span style="color:#475569">CODE1234</span>'; else typeIn(pin, 'K7Q2M9XA', u, 5.6, 6, true);
