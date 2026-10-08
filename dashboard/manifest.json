@@ -1,0 +1,266 @@
+[
+  {
+    "file": "screenshots/d01-overview.png",
+    "type": "screenshot",
+    "page_url": "/app",
+    "description": "Dashboard home: KPI cards, recent uploads, recent screens, offline alert (light)",
+    "suggested_caption": "Your whole network at a glance",
+    "duration_s": null
+  },
+  {
+    "file": "screenshots/d02-devices.png",
+    "type": "screenshot",
+    "page_url": "/app/devices",
+    "description": "Devices page: Pair Screen, Emergency Takeover Override panel, filters (light)",
+    "suggested_caption": "Every screen. One dashboard.",
+    "duration_s": null
+  },
+  {
+    "file": "screenshots/d02b-device-cards.png",
+    "type": "screenshot",
+    "page_url": "/app/devices",
+    "description": "Device cards grouped by location with status pill and action icons (light)",
+    "suggested_caption": "Grouped by location, live status",
+    "duration_s": null
+  },
+  {
+    "file": "screenshots/d03-content-library.png",
+    "type": "screenshot",
+    "page_url": "/app/content",
+    "description": "Media library table with filters and Upload Media (light)",
+    "suggested_caption": "Upload once, play everywhere",
+    "duration_s": null
+  },
+  {
+    "file": "screenshots/d04-playlists.png",
+    "type": "screenshot",
+    "page_url": "/app/playlists",
+    "description": "Playlists list with item counts and schedule usage (light)",
+    "suggested_caption": "Build playlists in seconds",
+    "duration_s": null
+  },
+  {
+    "file": "screenshots/d05-schedules.png",
+    "type": "screenshot",
+    "page_url": "/app/schedules",
+    "description": "Schedules with status, priority, recurrence and target screens (light)",
+    "suggested_caption": "Right content, right time",
+    "duration_s": null
+  },
+  {
+    "file": "screenshots/d06-locations.png",
+    "type": "screenshot",
+    "page_url": "/app/locations",
+    "description": "Locations table incl. Demo – Pune Café (light)",
+    "suggested_caption": "Organised by location",
+    "duration_s": null
+  },
+  {
+    "file": "screenshots/d07-users.png",
+    "type": "screenshot",
+    "page_url": "/app/users",
+    "description": "Team page empty state with Add User (light)",
+    "suggested_caption": "Bring your team in",
+    "duration_s": null
+  },
+  {
+    "file": "screenshots/d10-device-health.png",
+    "type": "screenshot",
+    "page_url": "/app/devices (Device Health modal)",
+    "description": "Device Health: CPU, memory, storage, battery, hardware, app version, heartbeats (light)",
+    "suggested_caption": "Health of every screen, from your desk",
+    "duration_s": null
+  },
+  {
+    "file": "screenshots/bug-light-mode-toggle-crash.png",
+    "type": "screenshot",
+    "page_url": "/app",
+    "description": "BUG: error page shown after clicking the light/dark toggle",
+    "suggested_caption": "—",
+    "duration_s": null
+  },
+  {
+    "file": "screenshots/dark/d01-overview-dark.png",
+    "type": "screenshot",
+    "page_url": "/app",
+    "description": "overview (dark mode)",
+    "suggested_caption": "",
+    "duration_s": null
+  },
+  {
+    "file": "screenshots/dark/d02-devices-dark.png",
+    "type": "screenshot",
+    "page_url": "/app/devices",
+    "description": "devices (dark mode)",
+    "suggested_caption": "",
+    "duration_s": null
+  },
+  {
+    "file": "screenshots/dark/d02b-device-cards-dark.png",
+    "type": "screenshot",
+    "page_url": "/app/devices",
+    "description": "device cards (dark mode)",
+    "suggested_caption": "",
+    "duration_s": null
+  },
+  {
+    "file": "screenshots/dark/d03-content-library-dark.png",
+    "type": "screenshot",
+    "page_url": "/app/content",
+    "description": "content library (dark mode)",
+    "suggested_caption": "",
+    "duration_s": null
+  },
+  {
+    "file": "screenshots/dark/d04-playlists-dark.png",
+    "type": "screenshot",
+    "page_url": "/app/playlists",
+    "description": "playlists (dark mode)",
+    "suggested_caption": "",
+    "duration_s": null
+  },
+  {
+    "file": "screenshots/dark/d05-schedules-dark.png",
+    "type": "screenshot",
+    "page_url": "/app/schedules",
+    "description": "schedules (dark mode)",
+    "suggested_caption": "",
+    "duration_s": null
+  },
+  {
+    "file": "screenshots/dark/d07-users-dark.png",
+    "type": "screenshot",
+    "page_url": "/app/users",
+    "description": "users (dark mode)",
+    "suggested_caption": "",
+    "duration_s": null
+  },
+  {
+    "file": "screenshots/dark/d08-settings-profile-dark.png",
+    "type": "screenshot",
+    "page_url": "/app/settings",
+    "description": "settings profile (dark mode)",
+    "suggested_caption": "",
+    "duration_s": null
+  },
+  {
+    "file": "screenshots/dark/d09-settings-display-overlays-dark.png",
+    "type": "screenshot",
+    "page_url": "/app/settings",
+    "description": "settings display overlays (dark mode)",
+    "suggested_caption": "",
+    "duration_s": null
+  },
+  {
+    "file": "screenshots/dark/d10-device-health-dark.png",
+    "type": "screenshot",
+    "page_url": "/app/devices (Device Health modal)",
+    "description": "device health (dark mode)",
+    "suggested_caption": "",
+    "duration_s": null
+  },
+  {
+    "file": "screenshots/dark/d11-web-player-pairing-dark.png",
+    "type": "screenshot",
+    "page_url": "https://tv.screensetu.com",
+    "description": "web player pairing (dark mode)",
+    "suggested_caption": "",
+    "duration_s": null
+  },
+  {
+    "file": "crops/c01-device-card-status-actions.png",
+    "type": "crop",
+    "page_url": "/app/devices",
+    "description": "Device card: thumbnail, status, location selector, health/preview/playlist/remote icons",
+    "suggested_caption": "Live status for every screen",
+    "duration_s": null
+  },
+  {
+    "file": "crops/c02-status-pill-offline.png",
+    "type": "crop",
+    "page_url": "/app/devices",
+    "description": "Status pill 'offline'",
+    "suggested_caption": "Know instantly when a screen drops",
+    "duration_s": null
+  },
+  {
+    "file": "crops/c03-health-metrics-panel.png",
+    "type": "crop",
+    "page_url": "/app/devices",
+    "description": "Device Health panel close-up",
+    "suggested_caption": "CPU, memory, storage, uptime",
+    "duration_s": null
+  },
+  {
+    "file": "crops/c04-emergency-takeover-panel.png",
+    "type": "crop",
+    "page_url": "/app/devices",
+    "description": "EMERGENCY TAKEOVER OVERRIDE panel with Activate Takeover",
+    "suggested_caption": "One click overrides every screen",
+    "duration_s": null
+  },
+  {
+    "file": "crops/c05-web-player-pairing-code.png",
+    "type": "crop",
+    "page_url": "https://tv.screensetu.com",
+    "description": "Web player pairing box (CODE1234 / PAIR DEVICE)",
+    "suggested_caption": "Enter code. You're live.",
+    "duration_s": null
+  },
+  {
+    "file": "crops/c06-schedule-cards.png",
+    "type": "crop",
+    "page_url": "/app/schedules",
+    "description": "Schedule cards close-up",
+    "suggested_caption": "Dayparting made simple",
+    "duration_s": null
+  },
+  {
+    "file": "demo-media/demo-breakfast-menu.png",
+    "type": "demo-media",
+    "page_url": "—",
+    "description": "Original demo signage graphic (1920x1080), not yet uploaded to the account",
+    "suggested_caption": "Breakfast menu",
+    "duration_s": null
+  },
+  {
+    "file": "demo-media/demo-lunch-menu.png",
+    "type": "demo-media",
+    "page_url": "—",
+    "description": "Original demo signage graphic (1920x1080), not yet uploaded to the account",
+    "suggested_caption": "Lunch menu",
+    "duration_s": null
+  },
+  {
+    "file": "demo-media/demo-dinner-menu.png",
+    "type": "demo-media",
+    "page_url": "—",
+    "description": "Original demo signage graphic (1920x1080), not yet uploaded to the account",
+    "suggested_caption": "Dinner menu",
+    "duration_s": null
+  },
+  {
+    "file": "demo-media/demo-weekend-offer.png",
+    "type": "demo-media",
+    "page_url": "—",
+    "description": "Original demo signage graphic (1920x1080), not yet uploaded to the account",
+    "suggested_caption": "Weekend offer",
+    "duration_s": null
+  },
+  {
+    "file": "demo-media/demo-welcome.png",
+    "type": "demo-media",
+    "page_url": "—",
+    "description": "Original demo signage graphic (1920x1080), not yet uploaded to the account",
+    "suggested_caption": "Welcome slide",
+    "duration_s": null
+  },
+  {
+    "file": "demo-media/demo-emergency-notice.png",
+    "type": "demo-media",
+    "page_url": "—",
+    "description": "Original demo signage graphic (1920x1080), not yet uploaded to the account",
+    "suggested_caption": "Emergency notice",
+    "duration_s": null
+  }
+]

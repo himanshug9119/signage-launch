@@ -111,6 +111,26 @@
 ## 9. Web player: `https://tv.screensetu.com`
 - **Pairing screen:** "Enter the pairing code from your dashboard to connect this display", an input with placeholder "CODE1234", and the button "PAIR DEVICE".
 
-## 10. Not present in the dashboard nav
-- There's no **Billing / Plan** page in the sidebar. It may live under the avatar menu; this wasn't verified.
-- There's no separate device **health/metrics** page. Health details are on the device cards (status, last seen, storage); a per-device detail view wasn't confirmed.
+## 10. Device card actions and the Device Health modal (`/app/devices`)
+- **Each device card** has 4 icon buttons: health (pulse icon), live snapshot (eye), playlist, and remote control.
+- **"Device Health" modal**, for example on "Cafe Main Display":
+  - **Metric tiles:** "CPU UTILIZATION" (System Load), "MEMORY USAGE" (Active RAM), "STORAGE AVAILABLE" ("3.8 GB of 5.8 GB"), "BATTERY LEVEL" (On Battery)
+  - **"HARDWARE & DISPLAY":** Manufacturer, Model, Android Version, Display
+  - **"SYSTEM INFO":** App Version ("1.3.1+20"), Last Check-in, Screen ID
+  - **"RECENT HEARTBEATS":** timestamped rows of CPU / Bat / PSS
+  - **Button:** "Close Monitor"
+- **Not opened:** the remote-control icon, since its commands (restart, clear cache) would act on a real device.
+
+## 11. Not present in the dashboard nav
+- **No Billing / Plan page** in the sidebar. The avatar menu ("SC ▾") wasn't explored.
+- **No separate health page.** Health lives in the Device Health modal.
+
+## 12. Bugs and UX notes found
+1. **The theme toggle crashes the app.** Clicking "Switch to light mode" in the top bar showed **"Something went wrong. An unexpected error occurred… Cannot read properties of undefined (reading 'devices')"** with a "Reload page" button. Light mode does work when set before the page loads. See `screenshots/bug-light-mode-toggle-crash.png`.
+2. **Light-mode contrast:** the sidebar footer "Console version v1.9.0" is almost invisible on the light background.
+3. **The Pair Screen button sometimes needs a second click** before its modal opens; the same happened with "Create Location".
+4. **Pairing direction may confuse users.** The dashboard generates the code and the TV types it in, which is the reverse of most signage apps. The marketing site's wording ("Launch the player app… It will automatically generate and show a unique 8-character pairing code") describes the opposite direction.
+5. **The Connection Alert banner is permanent** while the two old test screens stay offline. Retire or relink them before filming.
+6. **"Used in 1 schedules"** should read "Used in 1 schedule" (pluralisation on the playlist cards).
+7. **Device Health shows "N/A"** for CPU, memory and battery on offline devices. It would read better as "—" or "Offline".
+
