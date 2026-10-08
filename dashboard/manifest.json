@@ -128,14 +128,6 @@
     "duration_s": null
   },
   {
-    "file": "screenshots/dark/d07-users-dark.png",
-    "type": "screenshot",
-    "page_url": "/app/users",
-    "description": "users (dark mode)",
-    "suggested_caption": "",
-    "duration_s": null
-  },
-  {
     "file": "screenshots/dark/d08-settings-profile-dark.png",
     "type": "screenshot",
     "page_url": "/app/settings",

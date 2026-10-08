@@ -7,7 +7,7 @@ The real, logged-in dashboard at `https://screensetu.com/app`, captured on 9 Oct
 | `PAGES.md` | Every dashboard page: URL, purpose, exact UI wording, steps. |
 | `FLOWS.md` | Step-by-step scripts for the 8 recordings. **No recordings are included yet**; see the note in FLOWS.md. |
 | `screenshots/` | 9 light-mode pages, plus `bug-light-mode-toggle-crash.png`. |
-| `screenshots/dark/` | 11 dark-mode pages (the dashboard's default theme), including the web-player pairing screen. |
+| `screenshots/dark/` | 10 dark-mode pages (the dashboard's default theme), including the web-player pairing screen. |
 | `crops/` | 6 close-ups: device card, status pill, health panel, Emergency Takeover panel, pairing box, schedule cards. |
 | `demo-media/` | 6 original 1920×1080 demo graphics: breakfast, lunch and dinner menus, offer, welcome, emergency notice. |
 | `manifest.json` | One entry per file, with page URL, description and suggested caption. |
