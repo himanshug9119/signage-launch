@@ -1,0 +1,603 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ScreenSetu Launch</title>
+<style>
+:root{
+  --blue:#3B82F6; --blue-d:#2563EB; --blue-l:#93C5FD; --green:#10B981; --red:#EF4444; --amber:#F59E0B;
+  --bg:#0B0F1A; --card:#111827; --card2:#1E293B; --line:rgba(148,163,184,.16);
+  --tx:#F1F5F9; --mut:#94A3B8; --slate:#0F172A;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg)}
+body{font-family:Inter,system-ui,sans-serif;color:var(--tx);-webkit-font-smoothing:antialiased}
+#stage{position:absolute;inset:0;overflow:hidden;background:var(--bg)}
+#world{position:absolute;inset:0}
+.layer{position:absolute;inset:0;display:none}
+.abs{position:absolute}
+.center{left:50%;top:50%;transform:translate(-50%,-50%)}
+
+/* background */
+#bg{position:absolute;inset:0;background:radial-gradient(1200px 800px at 85% 0%,rgba(59,130,246,.22),transparent 60%),radial-gradient(1000px 700px at 0% 100%,rgba(16,185,129,.12),transparent 60%),var(--bg)}
+#grid{position:absolute;inset:-60px;background-image:radial-gradient(rgba(148,163,184,.13) 1.4px,transparent 1.6px);background-size:44px 44px}
+#redwash{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(239,68,68,.35),rgba(127,29,29,.55));opacity:0}
+#vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55));pointer-events:none}
+#fade{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none}
+
+/* type */
+.eyebrow{font-size:22px;font-weight:700;letter-spacing:.22em;color:var(--blue);text-transform:uppercase}
+.h1{font-size:84px;font-weight:800;letter-spacing:-.035em;line-height:1.04}
+.h2{font-size:64px;font-weight:800;letter-spacing:-.03em;line-height:1.08}
+.sub{font-size:26px;line-height:1.5;color:var(--mut);font-weight:400}
+.w{display:inline-block;will-change:transform,opacity}
+.grad{background:linear-gradient(90deg,#FFFFFF 0%,var(--blue-l) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bl{color:var(--blue)} .gr{color:var(--green)} .rd{color:var(--red)}
+
+/* TV */
+.tv{position:absolute}
+.tv .scr{position:relative;width:100%;aspect-ratio:16/9;border:6px solid #263244;border-radius:12px;background:#020617;overflow:hidden;box-shadow:0 30px 60px -20px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.04)}
+.tv .stand{width:28%;height:12px;margin:0 auto;background:#263244;border-radius:0 0 8px 8px}
+.tv .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+.c{position:absolute;inset:0;padding:7% 8%;display:flex;flex-direction:column;gap:6%;font-weight:800;color:#fff}
+.c .t{font-size:1.15em;letter-spacing:-.02em}
+.c .s{font-size:.6em;font-weight:600;opacity:.85}
+.c .bar{height:8%;border-radius:99px;background:rgba(255,255,255,.55)}
+.c .row{display:flex;justify-content:space-between;align-items:center;font-size:.62em;font-weight:600}
+.c .big{font-size:2.3em;line-height:1;letter-spacing:-.04em}
+.c .chart{flex:1;display:flex;align-items:flex-end;gap:6%}
+.c .chart i{flex:1;background:rgba(255,255,255,.8);border-radius:4px 4px 0 0}
+.c .prog{position:absolute;left:0;bottom:0;height:5px;background:rgba(255,255,255,.85)}
+.tag{display:inline-block;padding:.2em .6em;border-radius:6px;font-size:.5em;font-weight:800;letter-spacing:.08em}
+
+/* cards & UI */
+.card{position:absolute;background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:0 40px 80px -30px rgba(0,0,0,.8)}
+.pill{display:inline-flex;align-items:center;gap:10px;padding:8px 16px;border-radius:99px;font-weight:700;font-size:20px}
+.pill.on{background:rgba(16,185,129,.14);color:var(--green)}
+.dot{width:12px;height:12px;border-radius:50%;background:currentColor;display:inline-block}
+.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:14px;font-weight:800;color:#fff}
+.chip{position:absolute;display:flex;align-items:center;gap:18px;padding:22px 34px;border-radius:20px;background:var(--card);border:1px solid var(--line);font-size:34px;font-weight:700;box-shadow:0 30px 60px -25px rgba(0,0,0,.8)}
+.chip svg{width:44px;height:44px}
+
+/* browser frame */
+.browser{position:absolute;border-radius:18px;overflow:hidden;background:#fff;box-shadow:0 60px 120px -30px rgba(0,0,0,.85),0 0 0 1px rgba(255,255,255,.08)}
+.browser .bar{height:44px;background:#E2E8F0;display:flex;align-items:center;gap:9px;padding:0 18px}
+.browser .bar i{width:13px;height:13px;border-radius:50%;display:block}
+.browser .url{margin-left:18px;flex:1;max-width:460px;height:26px;border-radius:8px;background:#fff;color:#475569;font-size:14px;display:flex;align-items:center;padding:0 12px;font-weight:500}
+.browser .vp{position:relative;overflow:hidden;background:#F8FAFC}
+.browser .vp img{position:absolute;left:0;top:0;width:100%;display:block}
+.browser.dark{background:#0B0F1A}.browser.dark .bar{background:#1E293B}.browser.dark .url{background:#0F172A;color:#94A3B8}
+.fallback{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 8%;gap:18px;color:#0F172A}
+
+#cursor{position:absolute;left:0;top:0;width:46px;height:46px;opacity:0;z-index:50;filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
+#ripple{position:absolute;width:90px;height:90px;border-radius:50%;border:4px solid #fff;opacity:0;z-index:49;transform:translate(-50%,-50%)}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bg"></div><div id="grid"></div><div id="redwash"></div>
+  <div id="world">
+
+  <!-- S1 HOOK -->
+  <div class="layer" id="s1">
+    <div id="s1grid" class="abs" style="left:0;top:0;width:1920px;height:1080px"></div>
+    <div id="s1txt" class="abs h1" style="left:0;right:0;top:840px;text-align:center"></div>
+  </div>
+
+  <!-- S2 NO TRUCK ROLL -->
+  <div class="layer" id="s2">
+    <div id="usb" class="abs" style="left:430px;top:250px;width:380px;height:380px">
+      <svg viewBox="0 0 200 200" width="380" height="380"><g fill="none" stroke="#94A3B8" stroke-width="7" stroke-linejoin="round">
+        <rect x="62" y="70" width="76" height="110" rx="14" fill="#1E293B"/>
+        <rect x="76" y="22" width="48" height="48" rx="4" fill="#0F172A"/>
+        <rect x="88" y="36" width="9" height="9" fill="#94A3B8" stroke="none"/><rect x="104" y="36" width="9" height="9" fill="#94A3B8" stroke="none"/>
+        <circle cx="100" cy="128" r="12"/></g></svg>
+      <svg class="abs" style="left:0;top:0" viewBox="0 0 200 200" width="380" height="380"><path id="x1a" d="M30 30 L170 170" stroke="#EF4444" stroke-width="14" stroke-linecap="round" fill="none"/><path id="x1b" d="M170 30 L30 170" stroke="#EF4444" stroke-width="14" stroke-linecap="round" fill="none"/></svg>
+    </div>
+    <div id="van" class="abs" style="left:1050px;top:250px;width:460px;height:380px">
+      <svg viewBox="0 0 240 200" width="460" height="380"><g fill="#1E293B" stroke="#94A3B8" stroke-width="7" stroke-linejoin="round">
+        <path d="M20 60 h120 v80 h-120 z"/><path d="M140 85 h45 l30 30 v25 h-75 z"/>
+        <path d="M160 92 h22 l18 20 h-40 z" fill="#0F172A"/>
+        <circle cx="62" cy="148" r="17" fill="#0F172A"/><circle cx="182" cy="148" r="17" fill="#0F172A"/></g>
+        <g stroke="#94A3B8" stroke-width="6" stroke-linecap="round" opacity=".6"><path d="M-10 80 h22"/><path d="M-20 100 h28"/><path d="M-6 120 h18"/></g></svg>
+      <svg class="abs" style="left:40px;top:0" viewBox="0 0 200 200" width="380" height="380"><path id="x2a" d="M30 30 L170 170" stroke="#EF4444" stroke-width="14" stroke-linecap="round" fill="none"/><path id="x2b" d="M170 30 L30 170" stroke="#EF4444" stroke-width="14" stroke-linecap="round" fill="none"/></svg>
+    </div>
+    <div id="s2txt" class="abs h1" style="left:0;right:0;top:760px;text-align:center"></div>
+  </div>
+
+  <!-- S3 LOGO -->
+  <div class="layer" id="s3">
+    <div id="logoGrp" class="abs" style="left:0;top:0;width:1920px;height:1080px">
+      <svg id="tvIcon" class="abs" style="left:810px;top:250px" width="300" height="250" viewBox="0 0 120 100">
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B82F6"/><stop offset="1" stop-color="#10B981"/></linearGradient>
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter></defs>
+        <rect id="tvFillGlow" x="12" y="10" width="96" height="58" rx="5" fill="url(#lg)" filter="url(#glow)" opacity="0"/>
+        <rect id="tvFill" x="12" y="10" width="96" height="58" rx="5" fill="url(#lg)" opacity="0"/>
+        <rect id="tvOutline" x="6" y="4" width="108" height="70" rx="8" fill="none" stroke="#3B82F6" stroke-width="7" pathLength="100"/>
+        <path id="tvStand" d="M40 88 H80" stroke="#3B82F6" stroke-width="8" stroke-linecap="round" pathLength="100" fill="none"/>
+        <path id="tvNeck" d="M60 76 V88" stroke="#3B82F6" stroke-width="8" pathLength="100" fill="none"/>
+      </svg>
+      <div id="wordmark" class="abs" style="left:0;top:0;font-size:120px;font-weight:800;letter-spacing:-.04em;white-space:nowrap"></div>
+    </div>
+    <div id="s3eye" class="abs eyebrow" style="left:0;right:0;top:640px;text-align:center"></div>
+    <div id="s3tag" class="abs" style="left:0;right:0;top:700px;text-align:center;font-size:62px;font-weight:800;letter-spacing:-.03em"></div>
+  </div>
+
+  <!-- S4 ONE DASHBOARD -->
+  <div class="layer" id="s4">
+    <div class="abs" style="left:120px;top:190px;width:760px">
+      <div id="s4eye" class="eyebrow">One dashboard</div>
+      <div id="s4h" class="h1" style="margin-top:22px"></div>
+      <div id="s4sub" class="sub" style="margin-top:26px;max-width:640px">Manage dozens or hundreds of displays from a single web workspace.</div>
+    </div>
+    <div id="s4tiles" class="abs" style="left:0;top:0;width:1920px;height:1080px"></div>
+    <div id="s4persp" class="abs" style="left:900px;top:150px;width:1000px;height:700px;perspective:2200px">
+      <div id="s4frame" class="browser" style="left:0;top:0;width:1000px">
+        <div class="bar"><i style="background:#F87171"></i><i style="background:#FBBF24"></i><i style="background:#34D399"></i><div class="url">screensetu.com</div></div>
+        <div class="vp" style="height:562px">
+          <div class="fallback"><div style="font-size:15px;font-weight:700;letter-spacing:.2em;color:#3B82F6">DIGITAL SIGNAGE THAT JUST WORKS</div><div style="font-size:52px;font-weight:800;letter-spacing:-.03em;line-height:1.05">Every <span style="color:#2563EB">screen</span> in your <span style="color:#2563EB">business</span>, under your <span style="color:#2563EB">control</span>.</div><div style="display:flex;gap:14px"><span class="btn" style="background:#3B82F6;padding:14px 22px;font-size:18px">Get started free</span><span class="btn" style="background:#fff;color:#0F172A;border:1px solid #E2E8F0;padding:14px 22px;font-size:18px">Book a demo</span></div></div>
+          <img id="s4img" src="../screenshots/01-hero.png" style="width:1500px;max-width:none" onerror="this.remove()">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5 INSTANT UPDATES -->
+  <div class="layer" id="s5">
+    <div id="s5h" class="abs h2" style="left:0;right:0;top:90px;text-align:center"></div>
+    <div id="s5card" class="card" style="left:150px;top:330px;width:620px;height:500px;padding:34px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:30px;font-weight:800">Display #1 — Lobby TV</div><div style="font-size:20px;color:var(--mut);margin-top:6px">Playlist · Summer promo</div></div>
+        <div class="pill on"><span class="dot"></span>Online</div>
+      </div>
+      <div id="s5prev" style="margin-top:28px;height:250px;border-radius:14px;overflow:hidden;position:relative;font-size:30px"></div>
+      <div style="display:flex;justify-content:flex-end;margin-top:26px"><div id="s5save" class="btn" style="background:var(--blue);width:180px;height:62px;font-size:26px">Save</div></div>
+    </div>
+    <svg id="s5lines" class="abs" style="left:0;top:0" width="1920" height="1080"></svg>
+    <div id="s5tvs"></div>
+    <div id="s5ctr" class="abs" style="left:150px;top:880px;width:620px;display:flex;align-items:baseline;gap:20px">
+      <div id="s5num" style="font-size:64px;font-weight:800;color:var(--green);font-variant-numeric:tabular-nums;letter-spacing:-.03em">0.00s</div>
+      <div style="font-size:24px;color:var(--mut)">save → on screen</div>
+    </div>
+  </div>
+
+  <!-- S6 SCHEDULING -->
+  <div class="layer" id="s6">
+    <div class="abs" style="left:120px;top:230px;width:720px">
+      <div class="eyebrow">Smart scheduling &amp; dayparting</div>
+      <div id="s6h" class="h1" style="margin-top:22px;font-size:76px"></div>
+      <div class="sub" style="margin-top:26px">Program screens by day, weekday, and hour.</div>
+      <div id="s6clock" style="margin-top:44px;font-size:96px;font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums;color:#fff">07:00</div>
+    </div>
+    <div id="s6tvwrap" class="abs" style="left:960px;top:170px;width:840px;font-size:44px"></div>
+    <div class="abs" style="left:960px;top:820px;width:840px">
+      <div style="position:relative;height:70px;border-radius:16px;overflow:hidden;display:flex;background:var(--card2)">
+        <div id="sg0" style="flex:5;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700">Breakfast</div>
+        <div id="sg1" style="flex:5;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;border-left:2px solid #0B0F1A">Lunch</div>
+        <div id="sg2" style="flex:6;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;border-left:2px solid #0B0F1A">Dinner</div>
+      </div>
+      <div id="s6head" class="abs" style="top:-12px;width:6px;height:94px;background:#fff;border-radius:3px;box-shadow:0 0 18px #fff"></div>
+      <div style="display:flex;justify-content:space-between;margin-top:12px;color:var(--mut);font-size:20px;font-weight:600"><span>06:00</span><span>11:00</span><span>16:00</span><span>22:00</span></div>
+    </div>
+  </div>
+
+  <!-- S7 EMERGENCY -->
+  <div class="layer" id="s7">
+    <div id="s7h" class="abs h2" style="left:0;right:0;top:90px;text-align:center"></div>
+    <div id="s7card" class="card" style="left:130px;top:330px;width:600px;height:470px;padding:40px">
+      <div style="display:flex;align-items:center;gap:16px"><svg width="44" height="44" viewBox="0 0 24 24"><path fill="#EF4444" d="M1 21h22L12 2zm12-3h-2v-2h2zm0-4h-2v-4h2z"/></svg><div style="font-size:34px;font-weight:800">Emergency Takeover</div></div>
+      <div style="font-size:23px;color:var(--mut);margin-top:18px;line-height:1.5">Override one screen, a group, or every display company-wide.</div>
+      <div style="margin-top:26px;display:flex;gap:12px;flex-wrap:wrap"><span class="pill" style="background:var(--card2);color:#CBD5E1;font-size:19px">All locations</span><span class="pill" style="background:var(--card2);color:#CBD5E1;font-size:19px">6 screens</span></div>
+      <div id="s7btn" class="btn" style="position:absolute;left:40px;right:40px;bottom:40px;height:92px;background:var(--red);font-size:36px;letter-spacing:.12em;box-shadow:0 20px 50px -10px rgba(239,68,68,.6)">ACTIVATE</div>
+    </div>
+    <div id="s7tvs"></div>
+  </div>
+
+  <!-- S8 NEVER BLANK -->
+  <div class="layer" id="s8">
+    <div id="s8h" class="abs h2" style="left:0;right:0;top:90px;text-align:center"></div>
+    <div id="wifi" class="abs" style="left:885px;top:230px;width:150px;height:150px">
+      <svg viewBox="0 0 24 24" width="150" height="150"><g id="wifiArcs" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/></g><circle id="wifiDot" cx="12" cy="19" r="1.6" fill="#10B981"/><path id="wifiX" d="M3 3 L21 21" stroke="#EF4444" stroke-width="2.4" stroke-linecap="round" pathLength="100" fill="none"/></svg>
+    </div>
+    <div id="wifiLbl" class="abs" style="left:0;right:0;top:395px;text-align:center;font-size:28px;font-weight:800;letter-spacing:.15em"></div>
+    <div id="s8tvs"></div>
+    <div id="shaBadge" class="abs" style="left:560px;top:900px;display:flex;gap:24px">
+      <div class="pill" style="background:rgba(16,185,129,.14);color:var(--green);font-size:28px;padding:16px 28px"><svg width="30" height="30" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>SHA-256 integrity-checked</div>
+      <div id="cacheChip" class="pill" style="background:rgba(59,130,246,.14);color:var(--blue-l);font-size:28px;padding:16px 28px">Cached locally · Offline-ready</div>
+    </div>
+  </div>
+
+  <!-- S9 HEALTH -->
+  <div class="layer" id="s9">
+    <div class="abs" style="left:120px;top:250px;width:640px">
+      <div class="eyebrow">Live health &amp; remote control</div>
+      <div id="s9h" class="h1" style="margin-top:22px;font-size:76px"></div>
+      <div class="sub" style="margin-top:26px">See status, uptime, CPU, memory, and app version from your desk.</div>
+    </div>
+    <div id="s9panel" class="card" style="left:860px;top:200px;width:940px;height:680px;padding:36px 40px"></div>
+  </div>
+
+  <!-- S10 HARDWARE -->
+  <div class="layer" id="s10">
+    <div id="s10persp" class="abs" style="left:980px;top:250px;width:860px;height:560px;perspective:2000px">
+      <div id="s10frame" class="browser" style="left:0;top:0;width:860px">
+        <div class="bar"><i style="background:#F87171"></i><i style="background:#FBBF24"></i><i style="background:#34D399"></i><div class="url">screensetu.com/download</div></div>
+        <div class="vp" style="height:484px">
+          <div class="fallback"><div style="font-size:44px;font-weight:800;letter-spacing:-.03em">Download the Player App</div><div style="font-size:20px;color:#475569">Android TV · Boxes &amp; sticks · Samsung Tizen</div></div>
+          <img id="s10img" src="../screenshots/10-download.png" style="width:1700px;max-width:none" onerror="this.remove()">
+        </div>
+      </div>
+    </div>
+    <div class="abs" style="left:120px;top:150px;width:800px">
+      <div class="eyebrow">Runs on the hardware you already own</div>
+      <div id="s10h" class="h1" style="margin-top:22px"></div>
+    </div>
+    <div id="s10chips"></div>
+    <div id="s10foot" class="abs sub" style="left:120px;top:930px">Android 8.0+ · or Samsung Tizen with no download</div>
+  </div>
+
+  <!-- S11 HOW IT WORKS -->
+  <div class="layer" id="s11">
+    <div id="s11h" class="abs h1" style="left:0;right:0;top:110px;text-align:center"></div>
+    <div id="s11line" class="abs" style="left:330px;top:620px;height:6px;width:0;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:3px"></div>
+    <div id="s11steps"></div>
+  </div>
+
+  <!-- S12 USE CASES + PRICE -->
+  <div class="layer" id="s12">
+    <div id="s12cases"></div>
+    <div id="s12frame" class="browser" style="left:410px;top:560px;width:1100px">
+      <div class="bar"><i style="background:#F87171"></i><i style="background:#FBBF24"></i><i style="background:#34D399"></i><div class="url">screensetu.com/#pricing</div></div>
+      <div class="vp" style="height:460px"><img id="s12img" src="../screenshots/08-pricing.png" style="width:1790px;max-width:none;left:-345px;top:-395px" onerror="this.remove()"></div>
+    </div>
+    <div id="s12price" class="abs" style="left:0;right:0;top:110px;text-align:center">
+      <div class="eyebrow">Simple, transparent pricing</div>
+      <div style="font-size:130px;font-weight:800;letter-spacing:-.05em;margin-top:16px;line-height:1">Plans from <span class="bl">₹799</span><span style="font-size:70px;color:var(--mut)">/mo</span></div>
+      <div class="sub" style="margin-top:22px">Billed annually · Free to start · No credit card</div>
+    </div>
+  </div>
+
+  <!-- S13 CTA -->
+  <div class="layer" id="s13">
+    <div id="ctaLogo" class="abs" style="left:0;right:0;top:250px;display:flex;justify-content:center;align-items:center;gap:34px">
+      <svg width="150" height="125" viewBox="0 0 120 100"><rect x="12" y="10" width="96" height="58" rx="5" fill="url(#lg)"/><rect x="6" y="4" width="108" height="70" rx="8" fill="none" stroke="#3B82F6" stroke-width="7"/><path d="M60 76 V88 M40 88 H80" stroke="#3B82F6" stroke-width="8" stroke-linecap="round" fill="none"/></svg>
+      <div style="font-size:120px;font-weight:800;letter-spacing:-.04em">ScreenSetu</div>
+    </div>
+    <div id="ctaTag" class="abs" style="left:0;right:0;top:460px;text-align:center;font-size:44px;font-weight:700;color:#CBD5E1;letter-spacing:-.02em">Every screen in your business, under your control.</div>
+    <div id="ctaBtn" class="abs btn" style="left:710px;top:580px;width:500px;height:110px;background:var(--blue);font-size:42px;box-shadow:0 0 0 0 rgba(59,130,246,.6)">Get started free</div>
+    <div id="ctaSmall" class="abs" style="left:0;right:0;top:730px;text-align:center;font-size:28px;color:var(--mut);font-weight:500">Free to start · No credit card</div>
+    <div id="ctaUrl" class="abs" style="left:0;right:0;top:820px;text-align:center;font-size:64px;font-weight:800;letter-spacing:-.02em"><span class="grad">screensetu.com</span></div>
+  </div>
+
+  </div><!-- /world -->
+  <div id="vignette"></div>
+  <div id="ripple"></div>
+  <svg id="cursor" viewBox="0 0 24 24"><path d="M4 2 L4 20 L9 15.5 L12.5 22 L15.5 20.6 L12 14 L19 14 Z" fill="#fff" stroke="#0F172A" stroke-width="1.4" stroke-linejoin="round"/></svg>
+  <div id="fade"></div>
+</div>
+
+<script>
+// ---------- helpers ----------
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const P=(t,a,d)=>clamp((t-a)/d);                 // progress from a over d seconds
+const lerp=(a,b,x)=>a+(b-a)*x;
+const eo=x=>1-Math.pow(1-x,3);
+const eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const back=x=>{const c1=1.5,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+const spring=x=>x<=0?0:x>=1.6?1:1-Math.exp(-5.5*x)*Math.cos(10*x);
+const hash=n=>{const s=Math.sin(n*127.1+311.7)*43758.5453;return s-Math.floor(s)};
+function set(el,o,tf,extra){if(typeof el==='string')el=$(el);el.style.opacity=o;if(tf!=null)el.style.transform=tf;if(extra)Object.assign(el.style,extra)}
+function words(el,html){ // wrap top-level words into spans; keeps inline spans
+  el.innerHTML=html.split(' ').map(w=>`<span class="w">${w}</span>`).join(' ');
+}
+function wordsIn(el,t,a,stag=.07,d=.55,dy=50){
+  [...el.querySelectorAll('.w')].forEach((w,i)=>{const x=eo(P(t,a+i*stag,d));w.style.opacity=x;w.style.transform=`translateY(${(1-x)*dy}px)`;w.style.filter=x<1?`blur(${(1-x)*8}px)`:'none'});
+}
+
+// ---------- TV content ----------
+const C={
+  menu:(title='Today\'s Specials',g='#2563EB,#10B981')=>`<div class="c" style="background:linear-gradient(135deg,${g})"><div class="t">${title}</div><div class="bar" style="width:80%"></div><div class="bar" style="width:62%"></div><div class="bar" style="width:72%"></div></div>`,
+  promo:(a='SALE',b='Weekend offer',g='#F59E0B,#EF4444')=>`<div class="c" style="background:linear-gradient(135deg,${g});justify-content:center"><div class="s">${b}</div><div class="big">${a}</div></div>`,
+  news:()=>`<div class="c" style="background:linear-gradient(135deg,#1E3A8A,#3B82F6)"><div class="t">Company News</div><div class="bar" style="width:90%"></div><div class="bar" style="width:70%"></div><div class="bar" style="width:50%"></div></div>`,
+  kpi:()=>`<div class="c" style="background:linear-gradient(135deg,#0F172A,#1E293B)"><div class="t">Q3 KPIs</div><div class="chart"><i style="height:40%"></i><i style="height:65%"></i><i style="height:52%;background:#10B981"></i><i style="height:85%;background:#10B981"></i></div></div>`,
+  time:()=>`<div class="c" style="background:linear-gradient(135deg,#064E3B,#10B981)"><div class="t">Departures</div><div class="row"><span>Platform 2</span><span>08:42</span></div><div class="row"><span>Platform 4</span><span>08:55</span></div><div class="row"><span>Platform 1</span><span>09:10</span></div></div>`,
+  welcome:()=>`<div class="c" style="background:linear-gradient(135deg,#7C3AED,#3B82F6);justify-content:center"><div class="s">Lobby</div><div class="big" style="font-size:1.6em">Welcome!</div></div>`,
+  stale:()=>`<div class="c" style="background:linear-gradient(135deg,#475569,#64748B);filter:saturate(.2) brightness(.75);justify-content:center"><div class="s">Yesterday's offer</div><div class="big" style="font-size:1.7em;text-decoration:line-through;text-decoration-color:#EF4444">20% OFF</div><div><span class="tag" style="background:#EF4444">OUTDATED</span></div></div>`,
+  blank:()=>`<div class="c" style="background:#000;justify-content:center;align-items:center"><div class="s" style="opacity:.35;font-size:.5em;letter-spacing:.2em">NO SIGNAL</div></div>`,
+  alert:()=>`<div class="c" style="background:linear-gradient(135deg,#DC2626,#7F1D1D);justify-content:center;align-items:center;text-align:center"><div class="big" style="font-size:1.5em">⚠ ALERT</div><div class="s">Critical announcement</div></div>`,
+  newmenu:()=>`<div class="c" style="background:linear-gradient(135deg,#10B981,#3B82F6);justify-content:center"><div class="s"><span class="tag" style="background:#fff;color:#10B981">NEW</span></div><div class="big" style="font-size:1.45em">Summer Menu</div><div class="s">Live now</div></div>`,
+  breakfast:()=>`<div class="c" style="background:linear-gradient(135deg,#F59E0B,#FB923C)"><div class="t">☀ Breakfast</div><div class="row"><span>Masala Chai</span><span>₹40</span></div><div class="row"><span>Poha</span><span>₹60</span></div><div class="row"><span>Idli Sambar</span><span>₹80</span></div></div>`,
+  lunch:()=>`<div class="c" style="background:linear-gradient(135deg,#10B981,#0EA5E9)"><div class="t">🍛 Lunch</div><div class="row"><span>Veg Thali</span><span>₹180</span></div><div class="row"><span>Paneer Wrap</span><span>₹140</span></div><div class="row"><span>Fresh Lime</span><span>₹50</span></div></div>`,
+  dinner:()=>`<div class="c" style="background:linear-gradient(135deg,#312E81,#7C3AED)"><div class="t">🌙 Dinner</div><div class="row"><span>Biryani</span><span>₹260</span></div><div class="row"><span>Dal Makhani</span><span>₹190</span></div><div class="row"><span>Gulab Jamun</span><span>₹70</span></div></div>`,
+};
+function makeTV(parent,x,y,w,fs){
+  const d=document.createElement('div');d.className='tv';d.style.cssText=`left:${x}px;top:${y}px;width:${w}px;font-size:${fs||w/16}px`;
+  d.innerHTML=`<div class="scr"><div class="ct"></div><div class="flash"></div></div><div class="stand"></div>`;
+  (typeof parent==='string'?$(parent):parent).appendChild(d);
+  d._k=null;d.show=(k,arg)=>{const key=k+(arg||'');if(d._k!==key){d._k=key;d.querySelector('.ct').innerHTML=Array.isArray(arg)?C[k](...arg):C[k]()}};
+  d.flash=o=>d.querySelector('.flash').style.opacity=o;
+  return d;
+}
+
+// ---------- cursor ----------
+function cursor(t,keys){ // keys: [[time,x,y,click?],...]
+  const cur=$('cursor'),rip=$('ripple');
+  if(!keys||t<keys[0][0]-.3||t>keys[keys.length-1][0]+.5){cur.style.opacity=0;rip.style.opacity=0;return}
+  let x=keys[0][1],y=keys[0][2];
+  for(let i=0;i<keys.length-1;i++){const[a,x0,y0]=keys[i],[b,x1,y1]=keys[i+1];if(t>=a&&t<=b){const e=eio(P(t,a,b-a));x=lerp(x0,x1,e);y=lerp(y0,y1,e)}else if(t>b){x=x1;y=y1}}
+  let sc=1;rip.style.opacity=0;
+  keys.forEach(k=>{if(k[3]){const d=t-k[0];if(d>-.12&&d<.18)sc=.82;if(d>=0&&d<.5){const e=eo(d/.5);rip.style.opacity=(1-e)*.9;rip.style.left=k[1]+'px';rip.style.top=k[2]+'px';rip.style.transform=`translate(-50%,-50%) scale(${.3+e*1.2})`}}});
+  cur.style.opacity=clamp(P(t,keys[0][0]-.3,.3))*(1-P(t,keys[keys.length-1][0],.5));
+  cur.style.transform=`translate(${x-8}px,${y-4}px) scale(${sc})`;
+}
+const clickAt=(t,c)=>{const d=t-c;return d>-.1&&d<.15?.94:1};
+
+// ---------- build ----------
+// S1
+const s1tvs=[];{const W=430,G=60,X0=(1920-3*W-2*G)/2,Y0=110;const kinds=['menu','promo','news','kpi','time','welcome'];
+  for(let i=0;i<6;i++){const tv=makeTV('s1grid',X0+(i%3)*(W+G),Y0+Math.floor(i/3)*(W*9/16+80),W);tv.show(kinds[i]);s1tvs.push(tv)}}
+words($('s1txt'),'Blank <span class="rd">screens.</span> Stale <span class="rd">content.</span>');
+$('s1txt').innerHTML='<span class="w">Blank</span> <span class="w rd">screens.</span> <span class="w">Stale</span> <span class="w rd">content.</span>';
+$('s2txt').innerHTML='<span class="w">No</span> <span class="w">truck</span> <span class="w">roll.</span> <span class="w">No</span> <span class="w">USB</span> <span class="w">sticks.</span>';
+// S3 wordmark letters
+$('wordmark').innerHTML=[...'ScreenSetu'].map(c=>`<span class="w">${c}</span>`).join('');
+$('s3eye').innerHTML=[...'DIGITAL SIGNAGE THAT JUST WORKS'].map(c=>c===' '?' ':`<span class="w">${c}</span>`).join('');
+$('s3tag').innerHTML='<span class="w">Every</span> <span class="w bl">screen</span> <span class="w">in</span> <span class="w">your</span> <span class="w bl">business,</span> <span class="w">under</span> <span class="w">your</span> <span class="w bl">control.</span>';
+// S4
+$('s4h').innerHTML='<span class="w">Every</span> <span class="w">screen.</span><br><span class="w grad">One</span> <span class="w grad">dashboard.</span>';
+const s4tiles=[];{const kinds=['menu','promo','news','kpi','time','welcome'];for(let i=0;i<6;i++){const tv=makeTV('s4tiles',0,0,220,14);tv.show(kinds[i]);s4tiles.push(tv)}}
+// S5
+$('s5h').innerHTML='<span class="w">Hit</span> <span class="w">save.</span> <span class="w gr">Live</span> <span class="w gr">in</span> <span class="w gr">under</span> <span class="w gr">2</span> <span class="w gr">seconds.</span>';
+const s5prev=makeTV('s5prev',0,0,552,30);s5prev.style.position='absolute';s5prev.querySelector('.stand').remove();s5prev.querySelector('.scr').style.border='0';
+const s5tvs=[];{for(let i=0;i<3;i++){const tv=makeTV('s5tvs',1280,225+i*262,400);s5tvs.push(tv)}}
+// S6
+$('s6h').innerHTML='<span class="w">Right</span> <span class="w">content,</span><br><span class="w">right</span> <span class="w">hour,</span> <span class="w grad">every</span> <span class="w grad">day.</span>';
+const s6tv=makeTV('s6tvwrap',0,0,840,50);
+// S7
+$('s7h').innerHTML='<span class="w">One</span> <span class="w">click</span> <span class="w rd">overrides</span> <span class="w rd">every</span> <span class="w rd">screen.</span>';
+const s7tvs=[];{const W=320,G=36,X0=800,Y0=320;const kinds=['menu','promo','news','kpi','time','welcome'];for(let i=0;i<6;i++){const tv=makeTV('s7tvs',X0+(i%3)*(W+G),Y0+Math.floor(i/3)*(W*9/16+70),W);tv.show(kinds[i]);tv._base=kinds[i];s7tvs.push(tv)}}
+// S8
+$('s8h').innerHTML='<span class="w">Internet</span> <span class="w">drops.</span> <span class="w gr">Your</span> <span class="w gr">screens</span> <span class="w gr">don\'t.</span>';
+const s8tvs=[];{const W=470,G=60,X0=(1920-3*W-2*G)/2;for(let i=0;i<3;i++){const tv=makeTV('s8tvs',X0+i*(W+G),480,W);s8tvs.push(tv)}}
+// S9 panel
+$('s9h').innerHTML='<span class="w">Uptime,</span> <span class="w">CPU,</span> <span class="w">restarts</span> <span class="w grad">—</span> <span class="w grad">from</span> <span class="w grad">your</span> <span class="w grad">desk.</span>';
+{const rows=[['Lobby TV','Mumbai HQ','23%','41%','v2.4.1'],['Menu Board 1','Bandra Store','18%','36%','v2.4.1'],['Entrance Display','Pune Office','31%','52%','v2.4.1'],['Breakroom TV','Pune Office','—','—','v2.3.9'],['Platform Screen','Andheri','27%','44%','v2.4.1']];
+ let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:26px"><div style="font-size:32px;font-weight:800">Screens</div><div class="pill on" id="s9count"><span class="dot"></span>4 / 5 online</div></div>
+ <div style="display:grid;grid-template-columns:1.9fr 1.2fr .8fr .8fr .9fr;gap:0;font-size:18px;color:var(--mut);font-weight:700;letter-spacing:.08em;padding:0 16px 14px;border-bottom:1px solid var(--line)"><div>DISPLAY</div><div>STATUS</div><div>CPU</div><div>MEM</div><div>VERSION</div></div>`;
+ rows.forEach((r,i)=>{h+=`<div id="s9r${i}" style="display:grid;grid-template-columns:1.9fr 1.2fr .8fr .8fr .9fr;align-items:center;padding:20px 16px;border-bottom:1px solid var(--line);font-size:23px;border-radius:12px">
+  <div><div style="font-weight:700">${r[0]}</div><div style="font-size:17px;color:var(--mut)">${r[1]}</div></div>
+  <div id="s9st${i}"></div><div id="s9cpu${i}" style="font-variant-numeric:tabular-nums">${r[2]}</div><div style="font-variant-numeric:tabular-nums">${r[3]}</div><div style="color:var(--mut)">${r[4]}</div></div>`});
+ h+=`<div id="s9act" style="position:absolute;right:40px;bottom:34px;display:flex;gap:14px"><div class="btn" style="background:var(--card2);padding:16px 24px;font-size:21px;color:#CBD5E1">Clear cache</div><div id="s9restart" class="btn" style="background:var(--blue);padding:16px 26px;font-size:21px">↻ Restart player</div></div>`;
+ $('s9panel').innerHTML=h;}
+const ST={on:'<span class="pill on" style="font-size:19px;padding:6px 14px"><span class="dot"></span>Online</span>',
+  off:'<span class="pill" style="font-size:19px;padding:6px 14px;background:rgba(245,158,11,.14);color:#F59E0B"><span class="dot"></span>Unresponsive</span>',
+  spin:'<span class="pill" style="font-size:19px;padding:6px 14px;background:rgba(59,130,246,.14);color:#93C5FD">↻ Restarting…</span>'};
+// S10 chips
+const ico={tv:'<svg viewBox="0 0 24 24"><path fill="#3B82F6" d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2m0 14H3V5h18z"/></svg>',
+  stick:'<svg viewBox="0 0 24 24"><path fill="#10B981" d="M3 9h13l5 3-5 3H3z" /></svg>',
+  and:'<svg viewBox="0 0 24 24"><path fill="#10B981" d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8m17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5m-4.97-5.84 1.3-1.3c.2-.2.2-.51 0-.71s-.51-.2-.71 0l-1.48 1.48C13.85 1.23 12.95 1 12 1c-.96 0-1.86.23-2.66.63L7.85.15c-.2-.2-.51-.2-.71 0s-.2.51 0 .71l1.31 1.31C6.97 3.26 6 5.01 6 7h12c0-1.99-.97-3.75-2.47-4.84M10 5H9V4h1zm5 0h-1V4h1z"/></svg>',
+  g:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#F59E0B" stroke-width="2.5"/><path d="M12 7v5l3 3" stroke="#F59E0B" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>'};
+const chipsDef=[['and','Android TV',120,400],['tv','Google TV',560,400],['stick','HDMI player sticks',120,560],['tv','Samsung Tizen',120,720]];
+const s10chips=chipsDef.map(([ic,l,x,y])=>{const d=document.createElement('div');d.className='chip';d.style.left=x+'px';d.style.top=y+'px';d.innerHTML=ico[ic]+l;$('s10chips').appendChild(d);return d});
+$('s10h').innerHTML='<span class="w">No</span> <span class="w">new</span> <span class="w">hardware.</span><br><span class="w grad">Use</span> <span class="w grad">what</span> <span class="w grad">you</span> <span class="w grad">own.</span>';
+// S11 steps
+$('s11h').innerHTML='<span class="w">Pair.</span> <span class="w">Build.</span> <span class="w grad">Go</span> <span class="w grad">live.</span>';
+const steps=[['01','Pair your screen'],['02','Build your content'],['03','Schedule or go live']];
+const s11cards=steps.map(([n,l],i)=>{const d=document.createElement('div');d.className='card';d.style.cssText=`left:${190+i*540}px;top:380px;width:460px;height:470px;padding:36px`;
+  let vis='';
+  if(i===0)vis=`<div style="margin-top:34px;text-align:center;font-size:18px;letter-spacing:.2em;color:var(--mut);font-weight:700">PAIR DEVICE</div><div id="pcode" style="margin-top:14px;display:flex;justify-content:center;gap:8px"></div>`;
+  if(i===1)vis=`<div id="plist" style="position:relative;margin-top:34px;height:170px"></div>`;
+  if(i===2)vis=`<div style="margin-top:40px;display:flex;justify-content:center"><div id="livePill" class="pill" style="font-size:34px;padding:16px 34px;background:rgba(239,68,68,.14);color:#F87171;letter-spacing:.12em"><span class="dot"></span>LIVE</div></div><div style="text-align:center;margin-top:24px;font-size:22px;color:var(--mut)">updates land in seconds</div>`;
+  d.innerHTML=`<div class="stepn" style="font-size:72px;font-weight:800;letter-spacing:-.04em;color:#334155">${n}</div><div style="font-size:34px;font-weight:800;margin-top:6px">${l}</div>${vis}`;
+  $('s11steps').appendChild(d);return d});
+$('pcode').innerHTML=[...'A7K29QXM'].map((c,i)=>`<div class="pc" style="width:44px;height:62px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800;${i===4?'margin-left:14px':''}">${c}</div>`).join('');
+{const cols=['#3B82F6,#10B981','#F59E0B,#EF4444','#7C3AED,#3B82F6'];$('plist').innerHTML=cols.map((g,i)=>`<div class="pl" style="position:absolute;left:${i*130}px;top:0;width:115px;height:80px;border-radius:12px;background:linear-gradient(135deg,${g})"></div>`).join('')+`<div id="pdrop" style="position:absolute;left:0;right:0;top:110px;height:52px;border:3px dashed #334155;border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:19px;font-weight:600">Playlist · drag &amp; drop</div>`;}
+// S12 cases
+const cases=[['Retail & Restaurants','Menu boards, offers, pricing','menu'],['Corporate & Office','News, directories, KPI dashboards','kpi'],['Public Venues & Transit','Wayfinding, timetables, alerts','time']];
+const s12cards=cases.map(([a,b,k],i)=>{const d=document.createElement('div');d.className='card';d.style.cssText=`left:${130+i*567}px;top:270px;width:527px;height:540px;padding:34px;overflow:hidden`;
+  d.innerHTML=`<div class="tvslot" style="position:relative;height:270px"></div><div style="font-size:36px;font-weight:800;margin-top:44px;letter-spacing:-.02em">${a}</div><div style="font-size:24px;color:var(--mut);margin-top:14px">${b}</div>`;
+  $('s12cases').appendChild(d);const tv=makeTV(d.querySelector('.tvslot'),0,0,459,28);tv.show(k);return d});
+
+// ---------- scenes ----------
+const SC=[
+ ['s1',0,3.05],['s2',2.95,6.1],['s3',5.95,11.1],['s4',10.9,16.1],['s5',15.9,21.1],['s6',20.9,26.1],['s7',25.9,31.1],
+ ['s8',30.9,36.1],['s9',35.9,41.1],['s10',40.9,46.1],['s11',45.9,51.1],['s12',50.9,55.1],['s13',54.9,60.1]];
+function sceneAlpha(t,a,b){return Math.min(P(t,a,.3),1-P(t,b-.3,.3))}
+
+function render(t){
+  // background motion
+  $('grid').style.transform=`translate(${(t*6)%44}px,${(t*3)%44}px)`;
+  $('bg').style.transform=`scale(${1.05+.03*Math.sin(t*.4)}) translate(${Math.sin(t*.3)*20}px,${Math.cos(t*.25)*14}px)`;
+  let shake=0;
+  for(const[id,a,b]of SC){const el=$(id);if(t<a||t>b){el.style.display='none';continue}el.style.display='block';el.style.opacity=sceneAlpha(t,a,b);}
+  const curKeys=[];
+  // ---- S1 hook 0-3
+  if(t<3.1){
+    $('s1grid').style.transform=`scale(${1+t*.025})`;
+    s1tvs.forEach((tv,i)=>{const e=back(P(t,.05+i*.06,.5));tv.style.opacity=clamp(e);tv.style.transform=`translateY(${(1-e)*60}px) scale(${.9+.1*e})`});
+    const tv1=s1tvs[1];
+    if(t>=1.0){const g=t<1.35;tv1.show(g&&hash(Math.floor(t*30))>.5?'promo':'blank');tv1.style.transform+=g?` translateX(${(hash(t*99)-.5)*24}px)`:'';tv1.flash(g?hash(t*50)*.4:0)}else tv1.show('promo');
+    const tv4=s1tvs[4];
+    if(t>=1.9){const g=t<2.15;tv4.show(g&&hash(Math.floor(t*30)+3)>.5?'time':'stale');tv4.style.transform+=g?` translateX(${(hash(t*77)-.5)*20}px)`:''}else tv4.show('time');
+    wordsIn($('s1txt'),t,.5,.12,.5);
+    // slight RGB glitch shift on whole grid at glitch times
+    const gl=(t>1&&t<1.3)||(t>1.9&&t<2.1);$('s1grid').style.filter=gl?`drop-shadow(${(hash(t*13)-.5)*14}px 0 0 rgba(239,68,68,.6))`:'none';
+  }
+  // ---- S2 3-6
+  if(t>2.9&&t<6.2){
+    const u=eo(P(t,3.1,.6)),v=eo(P(t,3.3,.6));
+    set('usb',u,`translateX(${(1-u)*-200}px) rotate(${(1-u)*-15}deg)`);
+    set('van',v,`translateX(${(1-v)*240}px)`);
+    const dash=(id,a)=>{const e=eo(P(t,a,.25));const p=$(id);p.style.strokeDasharray='200';p.style.strokeDashoffset=200-198*e;p.style.opacity=e>0?1:0};
+    dash('x1a',4.3);dash('x1b',4.45);dash('x2a',4.8);dash('x2b',4.95);
+    const sh=(t>4.3&&t<4.5)||(t>4.8&&t<5.0);if(sh)shake=6;
+    wordsIn($('s2txt'),t,3.4,.1,.5);
+    const out=eio(P(t,5.6,.5));$('s2').style.transform=`scale(${1-out*.08})`;
+  }
+  // ---- S3 logo 6-11
+  if(t>5.9&&t<11.2){
+    const d1=eio(P(t,6.1,1.0));$('tvOutline').style.strokeDasharray='100';$('tvOutline').style.strokeDashoffset=100-100*d1;
+    const d2=eio(P(t,6.9,.4));$('tvNeck').style.strokeDasharray='100';$('tvNeck').style.strokeDashoffset=100-100*d2;
+    const d3=eio(P(t,7.1,.4));$('tvStand').style.strokeDasharray='100';$('tvStand').style.strokeDashoffset=100-100*d3;
+    const f=eo(P(t,7.3,.6));$('tvFill').setAttribute('opacity',f);$('tvFillGlow').setAttribute('opacity',f*(.8+.2*Math.sin(t*4)));
+    // move icon left & reveal wordmark
+    const m=eio(P(t,7.9,.7));
+    const iconW=300*lerp(1,.62,m), iconX=lerp(810,520,m), iconY=lerp(250,300,m);
+    const ic=$('tvIcon');ic.style.left=iconX+'px';ic.style.top=iconY+'px';ic.setAttribute('width',iconW);ic.setAttribute('height',iconW*100/120);
+    const wm=$('wordmark');wm.style.left=(iconX+iconW+36)+'px';wm.style.top=(iconY+iconW*100/120/2-75)+'px';
+    [...wm.children].forEach((s,i)=>{const e=eo(P(t,8.2+i*.06,.4));s.style.opacity=e;s.style.transform=`translateY(${(1-e)*40}px)`;s.style.color=i>=6?'#3B82F6':'#fff'});
+    [...$('s3eye').querySelectorAll('.w')].forEach((s,i)=>{const e=P(t,9.0+i*.018,.15);s.style.opacity=e});
+    wordsIn($('s3tag'),t,9.4,.09,.5,40);
+    const zoom=1+P(t,8.6,2.5)*.04;$('logoGrp').style.transform=`scale(${zoom})`;
+  }
+  // ---- S4 dashboard 11-16
+  if(t>10.8&&t<16.2){
+    const e=spring(P(t,11.0,1.3)*1.6);
+    $('s4frame').style.opacity=clamp(P(t,11,.4));
+    $('s4frame').style.transform=`translateX(${(1-e)*500}px) rotateY(${lerp(-24,-9,e)-P(t,12,4)*3}deg) rotateX(${lerp(8,3,e)}deg) scale(${1+P(t,12,4)*.05})`;
+    if($('s4img')){const pn=eio(P(t,11.2,4.8));$('s4img').style.left=lerp(-200,-260,pn)+'px';$('s4img').style.top=lerp(0,-30,pn)+'px'}
+    set('s4eye',eo(P(t,11.2,.4)));wordsIn($('s4h'),t,11.3,.1,.55);set('s4sub',eo(P(t,12.1,.5)),`translateY(${(1-eo(P(t,12.1,.5)))*20}px)`);
+    const cx=1400,cy=520;
+    s4tiles.forEach((tv,i)=>{const gx=120+(i%3)*245,gy=620+Math.floor(i/3)*160;
+      const a=12.3+i*.12,pr=P(t,a,1.1),e2=eio(pr);
+      const ang=i*1.047+t*1.4, R=lerp(460,0,e2);
+      const ox=cx+Math.cos(ang)*R-110, oy=cy+Math.sin(ang)*R*.55-62;
+      const x=lerp(ox,gx,e2), y=lerp(oy,gy,e2);
+      tv.style.left=x+'px';tv.style.top=y+'px';tv.style.opacity=clamp(P(t,a-.25,.3));tv.style.transform=`scale(${lerp(.5,1,e2)})`});
+  }
+  // ---- S5 instant updates 16-21
+  if(t>15.8&&t<21.2){
+    wordsIn($('s5h'),t,16.0,.08,.5);
+    const ce=eo(P(t,16.1,.6));set('s5card',ce,`translateY(${(1-ce)*60}px)`);
+    s5prev.show(t<17.65?'promo':'newmenu');s5prev.flash(t>17.65&&t<17.9?1-P(t,17.65,.25):0);
+    $('s5save').style.transform=`scale(${clickAt(t,17.6)})`;
+    s5tvs.forEach((tv,i)=>{const e=eo(P(t,16.3+i*.1,.6));tv.style.opacity=e;tv.style.transform=`translateX(${(1-e)*120}px)`;
+      const sw=18.0+i*.25;tv.show(t<sw?'promo':'newmenu');tv.flash(t>sw&&t<sw+.35?(1-P(t,sw,.35))*.9:0);
+      const ring=t>sw&&t<sw+.6;tv.querySelector('.scr').style.boxShadow=ring?`0 0 0 ${6+12*P(t,sw,.6)}px rgba(16,185,129,${.6*(1-P(t,sw,.6))}),0 30px 60px -20px rgba(0,0,0,.7)`:'';});
+    // pulse lines from card Save to TVs
+    let svg='';const sx=770,sy=750;
+    s5tvs.forEach((tv,i)=>{const tx=1280,ty=225+i*262+112;const pr=P(t,17.65,.35+i*.25);if(pr>0&&t<19.4){const path=`M${sx} ${sy} C ${sx+200} ${sy}, ${tx-220} ${ty}, ${tx} ${ty}`;
+      svg+=`<path d="${path}" stroke="rgba(59,130,246,.25)" stroke-width="4" fill="none"/><path d="${path}" stroke="#10B981" stroke-width="5" fill="none" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${100-100*eo(pr)}" opacity="${1-P(t,18.9,.5)}" style="filter:drop-shadow(0 0 8px #10B981)"/>`}});
+    $('s5lines').innerHTML=svg;
+    const sec=t<17.6?0:Math.min(1.42,(t-17.6)*1.58);$('s5num').textContent=(t<17.6?'0.00':sec.toFixed(2))+'s';
+    $('s5num').style.color=t>18.5?'#10B981':'#fff';set('s5ctr',eo(P(t,16.6,.5)));
+    curKeys.push([16.7,1300,980],[17.45,705,805],[17.6,705,805,1],[18.6,640,900]);
+  }
+  // ---- S6 schedule 21-26
+  if(t>20.8&&t<26.2){
+    wordsIn($('s6h'),t,21.1,.08,.5);
+    const te=eo(P(t,21.0,.6));$('s6tvwrap').style.opacity=te;$('s6tvwrap').style.transform=`translateY(${(1-te)*50}px) scale(${.96+.04*te})`;
+    const hp=eio(P(t,21.5,4.0)); // 0..1 across 06:00..22:00
+    const hours=6+hp*16;const hh=Math.floor(hours),mm=Math.floor((hours-hh)*60/15)*15;
+    $('s6clock').textContent=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
+    $('s6head').style.left=(hp*840-3)+'px';
+    const seg=hours<11?0:hours<16?1:2;s6tv.show(['breakfast','lunch','dinner'][seg]);
+    ['sg0','sg1','sg2'].forEach((id,i)=>{$(id).style.background=i===seg?['#F59E0B','#10B981','#7C3AED'][i]:'transparent';$(id).style.color=i===seg?'#fff':'#64748B'});
+    const swT=[21.5+4*0.5,21.5+4*0.79]; // approx swap moments for flash
+    let fl=0;[22.98,24.36].forEach(s=>{if(t>s&&t<s+.3)fl=(1-P(t,s,.3))*.8});s6tv.flash(fl);
+  }
+  // ---- S7 emergency 26-31
+  if(t>25.8&&t<31.2){
+    wordsIn($('s7h'),t,26.0,.08,.5);
+    const ce=eo(P(t,26.1,.6));set('s7card',ce,`translateX(${(1-ce)*-80}px) scale(${clickAt(t,27.4)*0+1})`);
+    const on=t>=27.42&&t<29.55;
+    $('s7btn').textContent=t>=27.42&&t<29.55?'RESTORE':'ACTIVATE';
+    $('s7btn').style.background=on?'#334155':'#EF4444';
+    $('s7btn').style.transform=`scale(${clickAt(t,27.4)*clickAt(t,29.5)})`;
+    $('s7btn').style.boxShadow=!on&&t<27.4?`0 0 0 ${8+8*Math.sin(t*8)}px rgba(239,68,68,.25),0 20px 50px -10px rgba(239,68,68,.6)`:'none';
+    s7tvs.forEach((tv,i)=>{const e=eo(P(t,26.2+i*.07,.5));tv.style.opacity=e;
+      const tOn=27.45+i*.04, tOff=29.6+i*.06;const alert=t>=tOn&&t<tOff;tv.show(alert?'alert':tv._base);
+      const pulse=alert?.5+.5*Math.sin((t-tOn)*14):0;tv.flash(t>tOn&&t<tOn+.2?.8:t>tOff&&t<tOff+.25?(1-P(t,tOff,.25))*.6:0);
+      tv.querySelector('.scr').style.boxShadow=alert?`0 0 ${30+30*pulse}px rgba(239,68,68,${.5+.4*pulse}),0 30px 60px -20px rgba(0,0,0,.7)`:'';
+      tv.style.transform=`translateY(${(1-e)*40}px)`});
+    $('redwash').style.opacity=t>27.42&&t<29.6?(.35+.25*Math.sin((t-27.42)*14))*(1-P(t,29.4,.2)):0;
+    if(t>27.42&&t<28.0)shake=18*(1-P(t,27.42,.58));
+    curKeys.push([26.6,1300,960],[27.25,430,750],[27.4,430,750,1],[28.4,520,880],[29.35,430,750],[29.5,430,750,1],[30.3,600,960]);
+  } else $('redwash').style.opacity=0;
+  // ---- S8 offline 31-36
+  if(t>30.8&&t<36.2){
+    wordsIn($('s8h'),t,31.0,.08,.5);
+    const we=back(P(t,31.2,.5));$('wifi').style.transform=`scale(${clamp(we,0,1.2)})`;$('wifi').style.opacity=clamp(we);
+    const off=t>=32.2&&t<35.0;const x=eo(P(t,32.2,.3));$('wifiX').style.strokeDasharray='100';$('wifiX').style.strokeDashoffset=t<35?100-100*x:100*P(t,35,.3);
+    const col=off?'#475569':'#10B981';$('wifiArcs').setAttribute('stroke',col);$('wifiDot').setAttribute('fill',col);
+    if(t>32.2&&t<32.45)shake=5;
+    $('wifiLbl').textContent=t<32.2?'ONLINE':t<35?'OFFLINE':'BACK ONLINE · RE-SYNCED';$('wifiLbl').style.color=t<32.2||t>=35?'#10B981':'#EF4444';$('wifiLbl').style.opacity=eo(P(t,31.4,.4));
+    const kinds=[['menu',['Today\'s Specials','#2563EB,#10B981']],['promo',['SALE','Weekend offer']],['welcome']];
+    const alt=[['newmenu'],['menu',['Fresh Arrivals','#F59E0B,#EF4444']],['news']];
+    s8tvs.forEach((tv,i)=>{const e=eo(P(t,31.3+i*.1,.5));tv.style.opacity=e;tv.style.transform=`translateY(${(1-e)*50}px)`;
+      const cyc=Math.floor((t-31+i*.7)/1.6)%2;const k=cyc?alt[i]:kinds[i];tv.show(k[0],k[1]);
+      let pr=tv.querySelector('.prog');if(!pr){}
+      const ph=((t-31+i*.7)/1.6)%1;tv.querySelector('.ct').firstElementChild.insertAdjacentHTML?0:0;
+      tv.querySelector('.flash').style.opacity=0;
+      tv.querySelector('.scr').style.boxShadow=off?'0 0 0 3px rgba(16,185,129,.55),0 30px 60px -20px rgba(0,0,0,.7)':'';
+      let bar=tv.querySelector('.pbar');if(!bar){bar=document.createElement('div');bar.className='pbar';bar.style.cssText='position:absolute;left:0;bottom:0;height:6px;background:#fff;opacity:.85';tv.querySelector('.scr').appendChild(bar)}bar.style.width=(ph*100)+'%'});
+    const be=back(P(t,33.6,.45));$('shaBadge').style.opacity=clamp(be);$('shaBadge').style.transform=`translateY(${(1-clamp(be))*30}px) scale(${.9+.1*be})`;
+    $('cacheChip').style.opacity=eo(P(t,34.0,.4));
+  }
+  // ---- S9 health 36-41
+  if(t>35.8&&t<41.2){
+    wordsIn($('s9h'),t,36.0,.08,.5);
+    const pe=eo(P(t,36.1,.6));set('s9panel',pe,`translateX(${(1-pe)*100}px)`);
+    for(let i=0;i<5;i++){const re=eo(P(t,36.4+i*.08,.4));$('s9r'+i).style.opacity=re;
+      let st='on';if(i===3){st=t<38.45?'off':t<39.6?'spin':'on'}
+      $('s9st'+i).innerHTML=ST[st];
+      if(i!==3)$('s9cpu'+i).textContent=Math.round([23,18,31,0,27][i]+6*Math.sin(t*3+i*2))+'%';
+      else $('s9cpu'+i).textContent=st==='on'?'12%':'—';
+      $('s9r'+i).style.background=i===3&&t>37.6&&t<40.2?'rgba(59,130,246,.10)':'transparent';}
+    $('s9count').innerHTML='<span class="dot"></span>'+(t<39.6?'4 / 5 online':'5 / 5 online');
+    $('s9restart').style.transform=`scale(${clickAt(t,38.4)})`;
+    curKeys.push([36.8,1200,1000],[37.6,1250,640],[38.25,1700,820],[38.4,1700,820,1],[39.4,1500,960]);
+  }
+  // ---- S10 hardware 41-46
+  if(t>40.8&&t<46.2){
+    wordsIn($('s10h'),t,41.0,.08,.5);
+    const fe=spring(P(t,41.2,1.3)*1.6);$('s10frame').style.opacity=clamp(P(t,41.2,.4));
+    $('s10frame').style.transform=`translateX(${(1-fe)*400}px) rotateY(${lerp(-22,-10,fe)}deg) scale(${1+P(t,42,4)*.04})`;
+    s10chips.forEach((c,i)=>{const a=42.0+i*.3;const e=back(P(t,a,.5));c.style.opacity=clamp(P(t,a,.2));c.style.transform=`translateY(${(1-clamp(e))*80}px) scale(${.7+.3*e})`});
+    $('s10foot').style.opacity=eo(P(t,43.6,.5));
+    if($('s10img')){const pn=eio(P(t,41.5,4.4));$('s10img').style.left=(-425)+'px';$('s10img').style.top=(-pn*160)+'px'}
+  }
+  // ---- S11 how it works 46-51
+  if(t>45.8&&t<51.2){
+    wordsIn($('s11h'),t,46.0,.15,.5);
+    const lights=[46.6,47.9,49.2];
+    s11cards.forEach((c,i)=>{const e=eo(P(t,46.2+i*.12,.5));c.style.opacity=e;c.style.transform=`translateY(${(1-e)*60}px)`;
+      const lit=t>=lights[i];c.style.borderColor=lit?'rgba(59,130,246,.7)':'rgba(148,163,184,.16)';c.style.boxShadow=lit?'0 0 0 1px rgba(59,130,246,.5),0 0 60px -10px rgba(59,130,246,.45),0 40px 80px -30px rgba(0,0,0,.8)':'';
+      c.querySelector('.stepn').style.color=lit?(i===2?'#10B981':'#3B82F6'):'#334155'});
+    $('s11line').style.width=(eio(P(t,46.6,2.6))*1260)+'px';$('s11line').style.opacity=.6;
+    [...document.querySelectorAll('#pcode .pc')].forEach((d,i)=>{const on=t>46.7+i*.08;d.style.color=on?'#fff':'transparent';d.style.background=on?'rgba(59,130,246,.25)':'#1E293B'});
+    [...document.querySelectorAll('#plist .pl')].forEach((d,i)=>{const e=eio(P(t,48.0+i*.25,.45));d.style.transform=`translate(${(1-e)*0}px,${e*96}px) scale(${1-e*.45})`;d.style.transformOrigin='left top';d.style.left=(i*130*(1-e)+e*(20+i*70))+'px'});
+    $('pdrop').style.color=t>48.2?'transparent':'';$('pdrop').style.borderColor=t>48.2?'rgba(59,130,246,.6)':'#334155';
+    const lv=t>=49.3;$('livePill').style.background=lv?'rgba(239,68,68,.18)':'#1E293B';$('livePill').style.color=lv?'#F87171':'#475569';
+    $('livePill').style.transform=`scale(${lv?1+.04*Math.sin((t-49.3)*8):1})`;
+  }
+  // ---- S12 use cases + price 51-55
+  if(t>50.8&&t<55.2){
+    s12cards.forEach((c,i)=>{const e=eo(P(t,51.0+i*.15,.5)),o=eio(P(t,52.75,.45));c.style.opacity=e*(1-o);c.style.transform=`translateY(${(1-e)*80-o*60}px)`});
+    const pe=eo(P(t,53.0,.6));set('s12price',pe,`scale(${.9+.1*pe})`);
+    const fe=eo(P(t,53.25,.7));set('s12frame',fe,`translateY(${(1-fe)*160}px)`);$('s12img')&&($('s12img').style.transform=`translateY(${-P(t,53.3,1.8)*40}px)`);
+  }
+  // ---- S13 CTA 55-60
+  if(t>54.8){
+    const le=spring(P(t,55.0,1.2)*1.6);set('ctaLogo',clamp(P(t,55,.4)),`scale(${.8+.2*le})`);
+    const tg=eo(P(t,55.7,.5));set('ctaTag',tg,`translateY(${(1-tg)*20}px)`);
+    const be=back(P(t,56.2,.5));const pulse=t>56.8?Math.sin((t-56.8)*4):0;
+    $('ctaBtn').style.opacity=clamp(be);$('ctaBtn').style.transform=`scale(${clamp(be,0,1.1)*(1+.03*Math.max(0,pulse))})`;
+    const ring=t>56.8?((t-56.8)%1.2)/1.2:0;$('ctaBtn').style.boxShadow=t>56.8?`0 0 0 ${ring*40}px rgba(59,130,246,${.5*(1-ring)}),0 30px 60px -20px rgba(59,130,246,.7)`:'none';
+    set('ctaSmall',eo(P(t,56.7,.5)));
+    const ue=eo(P(t,57.1,.6));set('ctaUrl',ue,`translateY(${(1-ue)*24}px)`);
+  }
+  // fade from/to black
+  $('fade').style.opacity=Math.max(1-P(t,0,.35),P(t,59.3,.7));
+  // camera shake
+  $('world').style.transform=shake?`translate(${(hash(t*91)-.5)*2*shake}px,${(hash(t*57)-.5)*2*shake}px)`:'none';
+  cursor(t,curKeys.length?curKeys:null);
+}
+window.render=render;
+window.__ready=document.fonts.ready.then(()=>Promise.all([...document.images].map(i=>i.complete?1:new Promise(r=>{i.onload=i.onerror=r}))));
+const q=new URLSearchParams(location.search);if(q.has('t'))window.__ready.then(()=>render(parseFloat(q.get('t'))));
+else if(!navigator.webdriver){let t0=performance.now();(function loop(){render(((performance.now()-t0)/1000)%60);requestAnimationFrame(loop)})()}
+</script>
+</body>
+</html>
